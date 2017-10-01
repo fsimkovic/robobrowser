@@ -186,7 +186,7 @@ class Form(object):
         if not isinstance(field, fields.BaseField):
             raise ValueError('Argument "field" must be an instance of '
                              'BaseField')
-        if field.name in self.fields:
+        if (isinstance(field, fields.Checkbox) or isinstance(field, fields.Radio)) and field.name in self.fields:
             self.fields[field.name].options.extend(field.options)
         else:
             self.fields.add(field.name, field)
