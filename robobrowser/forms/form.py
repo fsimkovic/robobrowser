@@ -102,6 +102,7 @@ class Payload(object):
     `data`.
 
     """
+
     def __init__(self):
         self.data = OrderedMultiDict()
         self.options = collections.defaultdict(OrderedMultiDict)
@@ -185,7 +186,10 @@ class Form(object):
         if not isinstance(field, fields.BaseField):
             raise ValueError('Argument "field" must be an instance of '
                              'BaseField')
-        self.fields.add(field.name, field)
+        if field.name in self.fields:
+            self.fields[field.name].options.extend(field.options)
+        else:
+            self.fields.add(field.name, field)
 
     @property
     def submit_fields(self):
@@ -223,5 +227,6 @@ class Form(object):
         :return: Payload instance
 
         """
-        include_fields = prepare_fields(self.fields, self.submit_fields, submit)
+        include_fields = prepare_fields(
+            self.fields, self.submit_fields, submit)
         return Payload.from_fields(include_fields)
